@@ -23,6 +23,7 @@ class ChooseRolesContainer extends React.Component {
   }
 
   validateSelection(category, selected, numAllowed) {
+    // BUG: after limit reached cannot unselect
     const numSelected = Object.keys(selected)
       .reduce((acc, cur) => selected[cur] ? acc + 1 : acc, 0);
     if (numSelected >= numAllowed) {

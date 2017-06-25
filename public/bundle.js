@@ -14709,6 +14709,7 @@ var ChooseRolesContainer = function (_React$Component) {
   _createClass(ChooseRolesContainer, [{
     key: 'validateSelection',
     value: function validateSelection(category, selected, numAllowed) {
+      // BUG: after limit reached cannot unselect
       var numSelected = Object.keys(selected).reduce(function (acc, cur) {
         return selected[cur] ? acc + 1 : acc;
       }, 0);
@@ -14791,12 +14792,17 @@ var _NewGameForm2 = _interopRequireDefault(_NewGameForm);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var mapState = function mapState(state) {
+  return {
+    players: state.players
+  };
+};
+
 var mapDispatch = function mapDispatch(dispatch) {
   return {
-    handleSubmit: function handleSubmit(evt) {
+    setBoard: function setBoard(evt) {
       evt.preventDefault();
 
-      var numPlayers = +evt.target.numPlayers.value;
       var board = (0, _makeBoard2.default)(numPlayers);
 
       dispatch((0, _numPlayers.setNumPlayers)(board.numPlayers));
@@ -14807,7 +14813,7 @@ var mapDispatch = function mapDispatch(dispatch) {
   };
 };
 
-exports.default = (0, _reactRedux.connect)(null, mapDispatch)(_NewGameForm2.default);
+exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(_NewGameForm2.default);
 
 /***/ }),
 /* 130 */
@@ -14956,7 +14962,8 @@ var _reactRouter = __webpack_require__(131);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var NewGameForm = function NewGameForm(_ref) {
-  var handleSubmit = _ref.handleSubmit;
+  var players = _ref.players,
+      setBoard = _ref.setBoard;
   return _react2.default.createElement(
     'div',
     null,
@@ -14966,52 +14973,20 @@ var NewGameForm = function NewGameForm(_ref) {
       'Start New Game'
     ),
     _react2.default.createElement(
-      'form',
-      { onSubmit: handleSubmit },
+      'div',
+      null,
       _react2.default.createElement(
-        'label',
-        { htmlFor: 'numPlayers' },
-        'Players: '
+        'h3',
+        null,
+        'Players'
       ),
-      _react2.default.createElement(
-        'select',
-        { name: 'numPlayers' },
-        _react2.default.createElement(
-          'option',
-          { value: '5' },
-          '5'
-        ),
-        _react2.default.createElement(
-          'option',
-          { value: '6' },
-          '6'
-        ),
-        _react2.default.createElement(
-          'option',
-          { value: '7' },
-          '7'
-        ),
-        _react2.default.createElement(
-          'option',
-          { value: '8' },
-          '8'
-        ),
-        _react2.default.createElement(
-          'option',
-          { value: '9' },
-          '9'
-        ),
-        _react2.default.createElement(
-          'option',
-          { value: '10' },
-          '10'
-        )
-      ),
-      _react2.default.createElement(
-        'button',
-        { type: 'submit' },
-        'submit'
-      )
+      players.map(function (player) {
+        return _react2.default.createElement(
+          'p',
+          { key: player.socketId },
+          player.name
+        );
+      })
     )
   );
 };
@@ -15041,9 +15016,17 @@ var _store = __webpack_require__(284);
 
 var _store2 = _interopRequireDefault(_store);
 
+var _currentPlayer = __webpack_require__(298);
+
+var _players = __webpack_require__(286);
+
 var _NewGameFormContainer = __webpack_require__(129);
 
 var _NewGameFormContainer2 = _interopRequireDefault(_NewGameFormContainer);
+
+var _JoinGameFormContainer = __webpack_require__(296);
+
+var _JoinGameFormContainer2 = _interopRequireDefault(_JoinGameFormContainer);
 
 var _ChooseRolesContainer = __webpack_require__(127);
 
@@ -15053,17 +15036,32 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // import GamePlayContainer from './containers/GamePlayContainer';
 
+/* global document */
+var setUpSocket = function setUpSocket() {
+  var socket = io();
+  socket.on('connect', function () {
+    console.log('i am connected!', socket.id);
+    _store2.default.dispatch((0, _currentPlayer.setCurrentPlayerSocket)(socket));
+  });
+
+  socket.on('addPlayer', function (newPlayer) {
+    console.log('a user joined:', newPlayer.name);
+    _store2.default.dispatch((0, _players.addPlayer)(newPlayer));
+  });
+};
+/* global io */
+
 var router = _react2.default.createElement(
   _reactRedux.Provider,
   { store: _store2.default },
   _react2.default.createElement(
     _reactRouter.Router,
     { history: _reactRouter.browserHistory },
-    _react2.default.createElement(_reactRouter.Route, { path: '/', component: _NewGameFormContainer2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: '/', component: _NewGameFormContainer2.default, onEnter: setUpSocket }),
+    _react2.default.createElement(_reactRouter.Route, { path: '/join', component: _JoinGameFormContainer2.default, onEnter: setUpSocket }),
     _react2.default.createElement(_reactRouter.Route, { path: '/choose', component: _ChooseRolesContainer2.default })
   )
-); /* global document */
-
+);
 
 _reactDom2.default.render(router, document.getElementById('root'));
 
@@ -29762,13 +29760,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _redux = __webpack_require__(279);
 
+var _reduxDevtoolsExtension = __webpack_require__(299);
+
 var _rootReducer = __webpack_require__(289);
 
 var _rootReducer2 = _interopRequireDefault(_rootReducer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var store = (0, _redux.createStore)(_rootReducer2.default);
+var store = (0, _redux.createStore)(_rootReducer2.default, (0, _reduxDevtoolsExtension.composeWithDevTools)());
 
 exports.default = store;
 
@@ -29956,6 +29956,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _redux = __webpack_require__(279);
 
+var _currentPlayer = __webpack_require__(298);
+
+var _currentPlayer2 = _interopRequireDefault(_currentPlayer);
+
 var _numPlayers = __webpack_require__(135);
 
 var _numPlayers2 = _interopRequireDefault(_numPlayers);
@@ -29983,6 +29987,7 @@ var _quests2 = _interopRequireDefault(_quests);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var rootReducer = (0, _redux.combineReducers)({
+  currentPlayer: _currentPlayer2.default,
   numPlayers: _numPlayers2.default,
   numMinions: _numMinions2.default,
   roles: _roles2.default,
@@ -30079,7 +30084,16 @@ var ChooseRoles = function ChooseRoles(props) {
       roles: props.selectedEvil,
       selectRole: props.selectRole
     }),
-    _react2.default.createElement('button', { onClick: props.submitSelections })
+    _react2.default.createElement(
+      'h3',
+      null,
+      'ready?'
+    ),
+    _react2.default.createElement(
+      'button',
+      { onClick: props.submitSelections },
+      'go!'
+    )
   );
 };
 
@@ -30276,6 +30290,251 @@ var defaultCharacterSelections = {
 };
 
 exports.default = defaultCharacterSelections;
+
+/***/ }),
+/* 296 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _reactRedux = __webpack_require__(244);
+
+var _react = __webpack_require__(12);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _currentPlayer = __webpack_require__(298);
+
+var _players = __webpack_require__(286);
+
+var _JoinGameForm = __webpack_require__(297);
+
+var _JoinGameForm2 = _interopRequireDefault(_JoinGameForm);
+
+var _WaitingRoom = __webpack_require__(301);
+
+var _WaitingRoom2 = _interopRequireDefault(_WaitingRoom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var mapState = function mapState(state) {
+  return {
+    currentPlayer: state.currentPlayer
+  };
+};
+
+var mapDispatch = function mapDispatch(dispatch) {
+  return {
+    setCurrentPlayerName: function setCurrentPlayerName(name) {
+      return dispatch((0, _currentPlayer.setCurrentPlayerName)(name));
+    },
+    addPlayer: function addPlayer(player) {
+      return dispatch((0, _players.addPlayer)(player));
+    }
+  };
+};
+
+var JoinGameFormContainer = function (_React$Component) {
+  _inherits(JoinGameFormContainer, _React$Component);
+
+  function JoinGameFormContainer() {
+    _classCallCheck(this, JoinGameFormContainer);
+
+    var _this = _possibleConstructorReturn(this, (JoinGameFormContainer.__proto__ || Object.getPrototypeOf(JoinGameFormContainer)).call(this));
+
+    _this.state = {
+      view: 'join'
+    };
+    _this.join = _this.join.bind(_this);
+    return _this;
+  }
+
+  _createClass(JoinGameFormContainer, [{
+    key: 'join',
+    value: function join(evt) {
+      evt.preventDefault();
+      var name = evt.target.name.value;
+      var socket = this.props.currentPlayer.socket;
+      var newPlayer = { socketId: socket.id, name: name };
+      this.props.setCurrentPlayerName(name);
+      this.props.addPlayer(newPlayer);
+      socket.emit('playerJoined', newPlayer);
+      this.setState({
+        view: 'wait'
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return this.state.view === 'join' ? _react2.default.createElement(_JoinGameForm2.default, { join: this.join }) : _react2.default.createElement(_WaitingRoom2.default, { playerName: this.props.currentPlayer.name });
+    }
+  }]);
+
+  return JoinGameFormContainer;
+}(_react2.default.Component);
+
+exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(JoinGameFormContainer);
+
+/***/ }),
+/* 297 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(12);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var JoinGameForm = function JoinGameForm(_ref) {
+  var join = _ref.join;
+  return _react2.default.createElement(
+    "div",
+    null,
+    _react2.default.createElement(
+      "h2",
+      null,
+      "Join Game"
+    ),
+    _react2.default.createElement(
+      "form",
+      { onSubmit: join },
+      _react2.default.createElement(
+        "label",
+        { htmlFor: "name" },
+        "Name: "
+      ),
+      _react2.default.createElement("input", { name: "name", type: "text" }),
+      _react2.default.createElement(
+        "button",
+        { type: "submit" },
+        "submit"
+      )
+    )
+  );
+};
+
+exports.default = JoinGameForm;
+
+/***/ }),
+/* 298 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var SET_CURRENT_PLAYER_SOCKET = 'SET_CURRENT_PLAYER_SOCKET';
+var SET_CURRENT_PLAYER_NAME = 'SET_CURRENT_PLAYER_NAME';
+
+var setCurrentPlayerSocket = exports.setCurrentPlayerSocket = function setCurrentPlayerSocket(socket) {
+  return { type: SET_CURRENT_PLAYER_SOCKET, socket: socket };
+};
+var setCurrentPlayerName = exports.setCurrentPlayerName = function setCurrentPlayerName(name) {
+  return { type: SET_CURRENT_PLAYER_NAME, name: name };
+};
+
+var currentPlayerReducer = function currentPlayerReducer() {
+  var prevState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { socket: {}, name: '' };
+  var action = arguments[1];
+
+  var nextState = Object.assign({}, prevState);
+  switch (action.type) {
+    case SET_CURRENT_PLAYER_SOCKET:
+      nextState.socket = action.socket;
+      return nextState;
+    case SET_CURRENT_PLAYER_NAME:
+      nextState.name = action.name;
+      return nextState;
+    default:
+      return prevState;
+  }
+};
+
+exports.default = currentPlayerReducer;
+
+/***/ }),
+/* 299 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var compose = __webpack_require__(279).compose;
+
+exports.__esModule = true;
+exports.composeWithDevTools = (
+  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ :
+    function() {
+      if (arguments.length === 0) return undefined;
+      if (typeof arguments[0] === 'object') return compose;
+      return compose.apply(null, arguments);
+    }
+);
+
+exports.devToolsEnhancer = (
+  typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__ ?
+    window.__REDUX_DEVTOOLS_EXTENSION__ :
+    function() { return function(noop) { return noop; } }
+);
+
+
+/***/ }),
+/* 300 */,
+/* 301 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(12);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var WaitingRoom = function WaitingRoom(_ref) {
+  var playerName = _ref.playerName;
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement(
+      'h3',
+      null,
+      'Thanks ',
+      playerName,
+      ', please wait for the game to begin'
+    )
+  );
+};
+
+exports.default = WaitingRoom;
 
 /***/ })
 /******/ ]);

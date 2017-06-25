@@ -14,7 +14,8 @@ const ChooseRoles = props => (
       roles={props.selectedEvil}
       selectRole={props.selectRole}
     />
-    <button onClick={props.submitSelections}></button>
+    <h3>ready?</h3>
+    <button onClick={props.submitSelections}>go!</button>
   </div>
 );
 

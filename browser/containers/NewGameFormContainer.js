@@ -7,11 +7,14 @@ import { setNumMinions } from '../redux/numMinions';
 import { setQuests } from '../redux/quests';
 import NewGameForm from '../components/NewGameForm';
 
+const mapState = state => ({
+  players: state.players,
+});
+
 const mapDispatch = dispatch => ({
-  handleSubmit: (evt) => {
+  setBoard: (evt) => {
     evt.preventDefault();
 
-    const numPlayers = +evt.target.numPlayers.value;
     const board = makeBoard(numPlayers);
 
     dispatch(setNumPlayers(board.numPlayers));
@@ -21,4 +24,4 @@ const mapDispatch = dispatch => ({
   },
 });
 
-export default connect(null, mapDispatch)(NewGameForm);
+export default connect(mapState, mapDispatch)(NewGameForm);
