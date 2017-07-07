@@ -22,6 +22,7 @@ const server = app.listen(1337, () => {
 });
 
 const io = require('socket.io')(server);
+const gameEvents = require('./gameEvents');
 
 io.on('connection', (socket) => {
   console.log('a client connected, id: ', socket.id);
@@ -29,7 +30,5 @@ io.on('connection', (socket) => {
     console.log(`client ${socket.id} disconnected`);
   });
 
-  socket.on('playerJoined', (newPlayer) => {
-    socket.broadcast.emit('addPlayer', newPlayer);
-  });
+  gameEvents.init(io, socket);
 });
