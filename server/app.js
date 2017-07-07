@@ -30,5 +30,5 @@ io.on('connection', (socket) => {
     console.log(`Client ${socket.id} disconnected`);
   });
 
-  gameEvents.init(io, socket);
+  gameEvents.init(socket);
 });

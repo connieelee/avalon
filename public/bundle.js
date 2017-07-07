@@ -24737,9 +24737,13 @@ var _redux = __webpack_require__(52);
 
 var _reduxDevtoolsExtension = __webpack_require__(226);
 
-var _reduxThunk = __webpack_require__(227);
+var _reduxSocket = __webpack_require__(274);
 
-var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+var _reduxSocket2 = _interopRequireDefault(_reduxSocket);
+
+var _socket = __webpack_require__(249);
+
+var _socket2 = _interopRequireDefault(_socket);
 
 var _reducers = __webpack_require__(228);
 
@@ -24747,7 +24751,8 @@ var _reducers2 = _interopRequireDefault(_reducers);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var store = (0, _redux.createStore)(_reducers2.default, (0, _reduxDevtoolsExtension.composeWithDevTools)((0, _redux.applyMiddleware)(_reduxThunk2.default)));
+var socketIoMiddleware = (0, _reduxSocket2.default)(_socket2.default, ['host/', 'player/']);
+var store = (0, _redux.createStore)(_reducers2.default, (0, _reduxDevtoolsExtension.composeWithDevTools)((0, _redux.applyMiddleware)(socketIoMiddleware)));
 
 exports.default = store;
 
@@ -24779,35 +24784,7 @@ exports.devToolsEnhancer = (
 
 
 /***/ }),
-/* 227 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-function createThunkMiddleware(extraArgument) {
-  return function (_ref) {
-    var dispatch = _ref.dispatch,
-        getState = _ref.getState;
-    return function (next) {
-      return function (action) {
-        if (typeof action === 'function') {
-          return action(dispatch, getState, extraArgument);
-        }
-
-        return next(action);
-      };
-    };
-  };
-}
-
-var thunk = createThunkMiddleware();
-thunk.withExtraArgument = createThunkMiddleware;
-
-exports['default'] = thunk;
-
-/***/ }),
+/* 227 */,
 /* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24822,6 +24799,8 @@ function reducer() {
   var action = arguments[1];
 
   switch (action.type) {
+    case 'response':
+      return { response: action.data };
     default:
       return prevState;
   }
@@ -24840,49 +24819,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _react = __webpack_require__(24);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _socket = __webpack_require__(249);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Main = function (_React$Component) {
-  _inherits(Main, _React$Component);
-
-  function Main() {
-    _classCallCheck(this, Main);
-
-    return _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).apply(this, arguments));
-  }
-
-  _createClass(Main, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      (0, _socket.initSocket)();
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'h1',
-        null,
-        'hi'
-      );
-    }
-  }]);
-
-  return Main;
-}(_react2.default.Component);
+var Main = function Main() {
+  return _react2.default.createElement(
+    'h1',
+    null,
+    'hi'
+  );
+};
 
 exports.default = Main;
 
@@ -28135,7 +28084,6 @@ module.exports = function(obj, fn){
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.initSocket = undefined;
 
 var _socket = __webpack_require__(250);
 
@@ -28144,12 +28092,6 @@ var _socket2 = _interopRequireDefault(_socket);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var socket = (0, _socket2.default)(window.location.origin);
-
-var initSocket = exports.initSocket = function initSocket() {
-  socket.on('connect', function () {
-    console.log('I\'m connected! ' + socket.id);
-  });
-};
 
 exports.default = socket;
 
@@ -31304,6 +31246,86 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
+
+/***/ }),
+/* 274 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = createSocketIoMiddleware;
+
+/**
+* Allows you to register actions that when dispatched, send the action to the
+* server via a socket.io socket.
+* `criteria` may be a function (type, action) that returns true if you wish to send the
+*  action to the server, array of action types, or a string prefix.
+* the third parameter is an options object with the following properties:
+* {
+*   eventName,// a string name to use to send and receive actions from the server.
+*   execute, // a function (action, emit, next, dispatch) that is responsible for
+*            // sending the message to the server.
+* }
+*
+*/
+function createSocketIoMiddleware(socket) {
+  var criteria = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+  var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+      _ref$eventName = _ref.eventName,
+      eventName = _ref$eventName === undefined ? 'action' : _ref$eventName,
+      _ref$execute = _ref.execute,
+      execute = _ref$execute === undefined ? defaultExecute : _ref$execute;
+
+  var emitBound = socket.emit.bind(socket);
+  return function (_ref2) {
+    var dispatch = _ref2.dispatch;
+
+    // Wire socket.io to dispatch actions sent by the server.
+    socket.on(eventName, dispatch);
+    return function (next) {
+      return function (action) {
+        if (evaluate(action, criteria)) {
+          return execute(action, emitBound, next, dispatch);
+        }
+        return next(action);
+      };
+    };
+  };
+
+  function evaluate(action, option) {
+    if (!action || !action.type) {
+      return false;
+    }
+
+    var type = action.type;
+
+    var matched = false;
+    if (typeof option === 'function') {
+      // Test function
+      matched = option(type, action);
+    } else if (typeof option === 'string') {
+      // String prefix
+      matched = type.indexOf(option) === 0;
+    } else if (Array.isArray(option)) {
+      // Array of types
+      matched = option.some(function (item) {
+        return type.indexOf(item) === 0;
+      });
+    }
+    return matched;
+  }
+
+  function defaultExecute(action, emit, next, dispatch) {
+    // eslint-disable-line no-unused-vars
+    emit(eventName, action);
+    return next(action);
+  }
+}
 
 /***/ })
 /******/ ]);

@@ -1,30 +1,13 @@
 const utils = require('../utils');
 
-module.exports.init = (io, socket) => {
-  // Host events
-  socket.on('hostNewGame', function () {
-    const gameId = utils.ID();
-    this.emit('newGameCreated', { gameId, hostId: this.id });
-    this.join(gameId);
-    io.sockets.adapter.rooms[gameId].players = [];
-  });
-
-  // Player events
-  socket.on('playerJoinGame', function (gameId, playerName) {
-    if (Object.keys(io.sockets.adapter.rooms).indexOf(gameId) === -1) {
-      socket.emit('roomDoesNotExist');
-      return;
+module.exports.init = (socket) => {
+  socket.on('action', (action) => {
+    // host events
+    if (action.type === 'host/hello') {
+      console.log('got hello data!', action.data);
+      socket.emit('action', { type: 'response', data: 'heya' });
     }
 
-    const playersInRoom = io.sockets.adapter.rooms[gameId].players;
-    if (playersInRoom.indexOf(playerName) > -1) {
-      socket.emit('playerNameTaken');
-      return;
-    }
-
-    playersInRoom.push(playerName);
-    this.join(gameId);
-    socket.broadcast.to(gameId).emit('playerJoined', { playerName });
-    socket.emit('joinSuccessful', { gameId, playerName });
+    // player events
   });
 };
