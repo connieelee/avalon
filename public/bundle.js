@@ -8722,6 +8722,7 @@ Transport.prototype.onClose = function () {
 module.exports.SERVER_CREATED_ROOM = 'server/CREATED_ROOM';
 module.exports.SERVER_PLAYER_JOINED = 'server/PLAYER_JOINED';
 module.exports.SERVER_JOIN_SUCCESSFUL = 'server/JOIN_SUCCESFUL';
+module.exports.SERVER_SEND_ROOMS = 'server/SEND_ROOMS';
 
 // host
 module.exports.HOST_NEW_GAME = 'host/NEW_GAME';
@@ -32222,6 +32223,7 @@ var _constants = __webpack_require__(70);
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var initialState = {
+  rooms: [],
   roomId: null,
   players: [],
   currentPlayer: {}
@@ -32234,8 +32236,14 @@ function reducer() {
   var nextState = Object.assign({}, prevState);
 
   switch (action.type) {
+    // init
+    case _constants.SERVER_SEND_ROOMS:
+      nextState.rooms = action.rooms;
+      return nextState;
+
     // host-related
     case _constants.SERVER_CREATED_ROOM:
+      nextState.rooms = [].concat(_toConsumableArray(prevState.rooms), [action.roomId]);
       nextState.roomId = action.roomId;
       return nextState;
 
@@ -32244,6 +32252,7 @@ function reducer() {
       nextState.players = [].concat(_toConsumableArray(prevState.players), [action.newPlayer]);
       return nextState;
     case _constants.SERVER_JOIN_SUCCESSFUL:
+      nextState.roomId = action.roomId;
       nextState.players = action.allPlayers;
       nextState.currentPlayer = action.newPlayer;
       return nextState;
@@ -34208,15 +34217,21 @@ var _reactRedux = __webpack_require__(62);
 
 var _reactRouterDom = __webpack_require__(127);
 
-var _socket = __webpack_require__(259);
+var _store = __webpack_require__(256);
 
-var _socket2 = _interopRequireDefault(_socket);
+var _store2 = _interopRequireDefault(_store);
 
 var _host = __webpack_require__(311);
 
 var _player = __webpack_require__(312);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapState = function mapState(state) {
+  return {
+    rooms: state.rooms
+  };
+};
 
 var mapDispatch = function mapDispatch(dispatch) {
   return {
@@ -34233,7 +34248,8 @@ var mapDispatch = function mapDispatch(dispatch) {
 };
 
 var StartScreen = function StartScreen(_ref) {
-  var hostNewGame = _ref.hostNewGame,
+  var rooms = _ref.rooms,
+      hostNewGame = _ref.hostNewGame,
       playerJoinGame = _ref.playerJoinGame;
   return _react2.default.createElement(
     'div',
@@ -34268,7 +34284,22 @@ var StartScreen = function StartScreen(_ref) {
           null,
           'ROOM ID:'
         ),
-        _react2.default.createElement('input', { name: 'room-id', type: 'text' })
+        _react2.default.createElement(
+          'select',
+          { name: 'room-id', defaultValue: 'select...' },
+          _react2.default.createElement(
+            'option',
+            { disabled: true },
+            'select...'
+          ),
+          rooms.map(function (roomId) {
+            return _react2.default.createElement(
+              'option',
+              { value: roomId },
+              roomId
+            );
+          })
+        )
       ),
       _react2.default.createElement(
         'div',
@@ -34289,7 +34320,7 @@ var StartScreen = function StartScreen(_ref) {
   );
 };
 
-exports.default = (0, _reactRedux.connect)(null, mapDispatch)(StartScreen);
+exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(StartScreen);
 
 /***/ }),
 /* 311 */

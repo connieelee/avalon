@@ -1,10 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import socket from '../socket';
+import store from '../store';
 
 import { hostNewGame } from '../actionCreators/host';
 import { playerJoinGame } from '../actionCreators/player';
+
+const mapState = state => ({
+  rooms: state.rooms,
+});
 
 const mapDispatch = dispatch => ({
   hostNewGame: () => {
@@ -18,7 +22,7 @@ const mapDispatch = dispatch => ({
   },
 });
 
-const StartScreen = ({ hostNewGame, playerJoinGame }) => (
+const StartScreen = ({ rooms, hostNewGame, playerJoinGame }) => (
   <div>
     <h2>host new game</h2>
     <Link to="/lobby"><button onClick={hostNewGame}>go!</button></Link>
@@ -26,7 +30,10 @@ const StartScreen = ({ hostNewGame, playerJoinGame }) => (
       <h2>join existing game</h2>
       <div>
         <span>ROOM ID:</span>
-        <input name="room-id" type="text" />
+        <select name="room-id" defaultValue="select...">
+          <option disabled>select...</option>
+          { rooms.map(roomId => <option value={roomId}>{roomId}</option>) }
+        </select>
       </div>
       <div>
         <span>PLAYER NAME:</span>
@@ -37,4 +44,4 @@ const StartScreen = ({ hostNewGame, playerJoinGame }) => (
   </div>
 );
 
-export default connect(null, mapDispatch)(StartScreen);
+export default connect(mapState, mapDispatch)(StartScreen);
