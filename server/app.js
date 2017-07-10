@@ -25,10 +25,10 @@ const io = require('socket.io')(server);
 const gameEvents = require('./gameEvents');
 
 io.on('connection', (socket) => {
-  console.log(`Client ${socket.id} connected`);
+  console.log(`${socket.id} connected`);
   socket.on('disconnect', () => {
-    console.log(`Client ${socket.id} disconnected`);
+    console.log(`${socket.id} disconnected`);
   });
 
-  gameEvents.init(socket);
+  gameEvents.init(io, socket);
 });
