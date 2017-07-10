@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import store from '../store';
 
 import { hostNewGame } from '../actionCreators/host';
 import { playerJoinGame } from '../actionCreators/player';
@@ -10,15 +9,16 @@ const mapState = state => ({
   rooms: state.rooms,
 });
 
-const mapDispatch = dispatch => ({
+const mapDispatch = (dispatch, ownProps) => ({
   hostNewGame: () => {
     dispatch(hostNewGame());
   },
-  playerJoinGame: (evt) => {
+  playerJoinGame: evt => {
     evt.preventDefault();
     const roomId = evt.target['room-id'].value;
     const name = evt.target['player-name'].value;
     dispatch(playerJoinGame(roomId, name));
+    ownProps.history.push('/lobby');
   },
 });
 
@@ -32,7 +32,7 @@ const StartScreen = ({ rooms, hostNewGame, playerJoinGame }) => (
         <span>ROOM ID:</span>
         <select name="room-id" defaultValue="select...">
           <option disabled>select...</option>
-          { rooms.map(roomId => <option value={roomId}>{roomId}</option>) }
+          { rooms.map(roomId => <option key={roomId} value={roomId}>{roomId}</option>) }
         </select>
       </div>
       <div>

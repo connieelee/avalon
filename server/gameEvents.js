@@ -1,7 +1,8 @@
 const utils = require('../utils');
 const {
   serverSendRooms,
-  serverCreatedRoom,
+  serverNewRoomCreated,
+  serverHostSuccessful,
   serverPlayerJoined,
   serverJoinSuccessful,
 } = require('./actionCreators');
@@ -13,6 +14,7 @@ const {
 
 const rooms = {};
 module.exports.init = (io, socket) => {
+  // init
   socket.emit('action', serverSendRooms(Object.keys(rooms)));
 
   socket.on('action', (action) => {
@@ -21,7 +23,8 @@ module.exports.init = (io, socket) => {
       const roomId = utils.ID();
       rooms[roomId] = { host: socket, players: [] };
       socket.join(roomId);
-      io.emit('action', serverCreatedRoom(roomId));
+      io.emit('action', serverNewRoomCreated(roomId));
+      socket.emit('action', serverHostSuccessful(roomId));
     }
 
     // player events

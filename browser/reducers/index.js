@@ -1,6 +1,7 @@
 import {
   SERVER_SEND_ROOMS,
-  SERVER_CREATED_ROOM,
+  SERVER_NEW_ROOM_CREATED,
+  SERVER_HOST_SUCCESSFUL,
   SERVER_PLAYER_JOINED,
   SERVER_JOIN_SUCCESSFUL,
 } from '../../constants';
@@ -10,24 +11,28 @@ const initialState = {
   roomId: null,
   players: [],
   currentPlayer: {},
+  isHost: false,
 };
 
 function reducer(prevState = initialState, action) {
   const nextState = Object.assign({}, prevState);
 
   switch (action.type) {
-    // init
+    // cross-game events
     case SERVER_SEND_ROOMS:
       nextState.rooms = action.rooms;
       return nextState;
-
-    // host-related
-    case SERVER_CREATED_ROOM:
+    case SERVER_NEW_ROOM_CREATED:
       nextState.rooms = [...prevState.rooms, action.roomId];
+      return nextState;
+
+    // host-related events
+    case SERVER_HOST_SUCCESSFUL:
+      nextState.isHost = true;
       nextState.roomId = action.roomId;
       return nextState;
 
-    // player-related
+    // player-related events
     case SERVER_PLAYER_JOINED:
       nextState.players = [...prevState.players, action.newPlayer];
       return nextState;

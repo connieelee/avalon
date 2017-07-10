@@ -8719,10 +8719,11 @@ Transport.prototype.onClose = function () {
 
 
 // server
-module.exports.SERVER_CREATED_ROOM = 'server/CREATED_ROOM';
+module.exports.SERVER_SEND_ROOMS = 'server/SEND_ROOMS';
+module.exports.SERVER_HOST_SUCCESSFUL = 'server/HOST_SUCCESSFUL';
+module.exports.SERVER_NEW_ROOM_CREATED = 'server/NEW_ROOM_CREATED';
 module.exports.SERVER_PLAYER_JOINED = 'server/PLAYER_JOINED';
 module.exports.SERVER_JOIN_SUCCESSFUL = 'server/JOIN_SUCCESFUL';
-module.exports.SERVER_SEND_ROOMS = 'server/SEND_ROOMS';
 
 // host
 module.exports.HOST_NEW_GAME = 'host/NEW_GAME';
@@ -32226,7 +32227,8 @@ var initialState = {
   rooms: [],
   roomId: null,
   players: [],
-  currentPlayer: {}
+  currentPlayer: {},
+  isHost: false
 };
 
 function reducer() {
@@ -32236,18 +32238,21 @@ function reducer() {
   var nextState = Object.assign({}, prevState);
 
   switch (action.type) {
-    // init
+    // cross-game events
     case _constants.SERVER_SEND_ROOMS:
       nextState.rooms = action.rooms;
       return nextState;
-
-    // host-related
-    case _constants.SERVER_CREATED_ROOM:
+    case _constants.SERVER_NEW_ROOM_CREATED:
       nextState.rooms = [].concat(_toConsumableArray(prevState.rooms), [action.roomId]);
+      return nextState;
+
+    // host-related events
+    case _constants.SERVER_HOST_SUCCESSFUL:
+      nextState.isHost = true;
       nextState.roomId = action.roomId;
       return nextState;
 
-    // player-related
+    // player-related events
     case _constants.SERVER_PLAYER_JOINED:
       nextState.players = [].concat(_toConsumableArray(prevState.players), [action.newPlayer]);
       return nextState;
@@ -34217,10 +34222,6 @@ var _reactRedux = __webpack_require__(62);
 
 var _reactRouterDom = __webpack_require__(127);
 
-var _store = __webpack_require__(256);
-
-var _store2 = _interopRequireDefault(_store);
-
 var _host = __webpack_require__(311);
 
 var _player = __webpack_require__(312);
@@ -34233,7 +34234,7 @@ var mapState = function mapState(state) {
   };
 };
 
-var mapDispatch = function mapDispatch(dispatch) {
+var mapDispatch = function mapDispatch(dispatch, ownProps) {
   return {
     hostNewGame: function hostNewGame() {
       dispatch((0, _host.hostNewGame)());
@@ -34243,6 +34244,7 @@ var mapDispatch = function mapDispatch(dispatch) {
       var roomId = evt.target['room-id'].value;
       var name = evt.target['player-name'].value;
       dispatch((0, _player.playerJoinGame)(roomId, name));
+      ownProps.history.push('/lobby');
     }
   };
 };
@@ -34295,7 +34297,7 @@ var StartScreen = function StartScreen(_ref) {
           rooms.map(function (roomId) {
             return _react2.default.createElement(
               'option',
-              { value: roomId },
+              { key: roomId, value: roomId },
               roomId
             );
           })
@@ -34382,42 +34384,55 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mapState = function mapState(state) {
   return {
     roomId: state.roomId,
-    players: state.players
+    players: state.players,
+    isHost: state.isHost,
+    currentPlayer: state.currentPlayer
   };
 };
 
 var Lobby = function Lobby(_ref) {
   var roomId = _ref.roomId,
-      players = _ref.players;
+      players = _ref.players,
+      isHost = _ref.isHost,
+      currentPlayer = _ref.currentPlayer;
   return _react2.default.createElement(
     'div',
     null,
     _react2.default.createElement(
-      'h2',
+      'h3',
       null,
-      'waiting for players...'
+      'Welcome',
+      !isHost && ', ' + currentPlayer.name
     ),
     _react2.default.createElement(
       'p',
       null,
-      'room id: ',
+      'Room ID: ',
       roomId
     ),
-    _react2.default.createElement(
-      'h2',
+    isHost ? _react2.default.createElement(
+      'div',
       null,
-      'current players:'
-    ),
-    _react2.default.createElement(
-      'ul',
+      _react2.default.createElement(
+        'h3',
+        null,
+        'players in room:'
+      ),
+      _react2.default.createElement(
+        'ul',
+        null,
+        players.map(function (player) {
+          return _react2.default.createElement(
+            'li',
+            { key: player.id },
+            player.name
+          );
+        })
+      )
+    ) : _react2.default.createElement(
+      'p',
       null,
-      players.map(function (player) {
-        return _react2.default.createElement(
-          'li',
-          { key: player.id },
-          player.name
-        );
-      })
+      'Please wait for host to begin the game'
     )
   );
 };
