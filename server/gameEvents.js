@@ -9,6 +9,7 @@ const {
 
 const {
   HOST_NEW_GAME,
+  HOST_START_GAME,
   PLAYER_JOIN_GAME,
 } = require('../constants');
 
@@ -26,12 +27,16 @@ module.exports.init = (io, socket) => {
       io.emit('action', serverNewRoomCreated(roomId));
       socket.emit('action', serverHostSuccessful(roomId));
     }
+    if (action.type === HOST_START_GAME) {
+      // TODO: ASSIGN ROLES TO PLAYERS
+    }
 
     // player events
     if (action.type === PLAYER_JOIN_GAME) {
+      // TODO: handle invalid-room, name-taken, and room-full errors
       const { roomId, name } = action;
       const room = rooms[roomId];
-      if (room) {
+      if (room && room.players.length <= 10) {
         const nameTaken = room.players.find(player => player.name === name);
         if (!nameTaken) {
           const newPlayer = { id: socket.id, name };
@@ -42,7 +47,6 @@ module.exports.init = (io, socket) => {
           console.log(`${socket.id} joined game ${roomId}`);
         }
       }
-      // TODO: handle no-room and name-taken errors
     }
   });
 };

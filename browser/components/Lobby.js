@@ -4,24 +4,19 @@ import { connect } from 'react-redux';
 const mapState = state => ({
   roomId: state.roomId,
   players: state.players,
-  isHost: state.isHost,
-  currentPlayer: state.currentPlayer,
 });
 
-const Lobby = ({ roomId, players, isHost, currentPlayer }) => (
-  <div>
-    <h3>Welcome{ !isHost && `, ${currentPlayer.name}`}</h3>
-    <p>Room ID: {roomId}</p>
-    {
-      isHost ?
-        <div>
-          <h3>players in room:</h3>
-          <ul>
-            { players.map(player => <li key={player.id}>{player.name}</li>) }
-          </ul>
-        </div> :
-        <p>Please wait for host to begin the game</p>
-    }
+const Lobby = ({ roomId, players }) => (
+  <div className="vertical-center-container">
+    <div className="text-center">
+      <h1>Room ID: {roomId}</h1>
+      <p>Enter room code on mobile device to join</p>
+      <hr className="dots" />
+      <h2>Players Joined:</h2>
+      <ul>
+        { players.map(player => <li key={player.id}>{player.name}</li>) }
+      </ul>
+    </div>
   </div>
 );
 

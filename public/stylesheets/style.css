@@ -1,5 +1,61 @@
 * {
-  box-sizing: border-box; }
+  font-family: 'Zilla Slab';
+  box-sizing: border-box;
+  color: #1f1f1f; }
 
-button.selected {
-  background-color: blue; }
+p, span {
+  font-family: 'Open Sans'; }
+
+h1 ~ p {
+  margin-top: -0.4em; }
+
+.text-center {
+  text-align: center; }
+
+.vertical-center-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around; }
+  .vertical-center-container > * {
+    margin-bottom: 15%; }
+
+#main {
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+  #main > p {
+    width: 60%; }
+
+.btn {
+  border: 1px solid darkcyan;
+  border-radius: 0.3em;
+  padding: 0.6em 1.2em;
+  text-decoration: none;
+  color: darkcyan;
+  background-color: white; }
+
+.mobile form {
+  display: flex;
+  flex-direction: column; }
+
+.mobile input {
+  border: 1px solid orange;
+  border-radius: .4em;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  margin: .5em 1em; }
+
+.mobile .btn {
+  font-size: 1em;
+  margin: .5em 1em;
+  background-color: darkcyan;
+  color: white; }
+
+hr.dots {
+  color: darkcyan;
+  border-width: 0 0 .4em;
+  border-style: solid;
+  border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1" width="8" height="4"><circle fill="darkcyan" cx="1" cy="0.5" r="0.5"/></svg>') 0 0 100% repeat;
+  width: 6em;
+  margin-top: 1.5em; }

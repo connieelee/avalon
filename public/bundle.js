@@ -8727,6 +8727,7 @@ module.exports.SERVER_JOIN_SUCCESSFUL = 'server/JOIN_SUCCESFUL';
 
 // host
 module.exports.HOST_NEW_GAME = 'host/NEW_GAME';
+module.exports.HOST_START_GAME = 'host/START_GAME';
 
 // player
 module.exports.PLAYER_JOIN_GAME = 'player/JOIN_GAME';
@@ -15572,21 +15573,42 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 var _reactRedux = __webpack_require__(62);
 
+var _reactRouterDom = __webpack_require__(127);
+
 var _store = __webpack_require__(256);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _Main = __webpack_require__(285);
+var _HostMain = __webpack_require__(316);
 
-var _Main2 = _interopRequireDefault(_Main);
+var _HostMain2 = _interopRequireDefault(_HostMain);
+
+var _Lobby = __webpack_require__(313);
+
+var _Lobby2 = _interopRequireDefault(_Lobby);
+
+var _PlayerJoin = __webpack_require__(317);
+
+var _PlayerJoin2 = _interopRequireDefault(_PlayerJoin);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/* global document */
 _reactDom2.default.render(_react2.default.createElement(
   _reactRedux.Provider,
   { store: _store2.default },
-  _react2.default.createElement(_Main2.default, null)
-), document.getElementById('root')); /* global document */
+  _react2.default.createElement(
+    _reactRouterDom.BrowserRouter,
+    null,
+    _react2.default.createElement(
+      'div',
+      null,
+      _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _HostMain2.default }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/lobby', component: _Lobby2.default }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/join', component: _PlayerJoin2.default })
+    )
+  )
+), document.getElementById('root'));
 
 /***/ }),
 /* 132 */
@@ -32270,48 +32292,7 @@ function reducer() {
 exports.default = reducer;
 
 /***/ }),
-/* 285 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = __webpack_require__(6);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRouterDom = __webpack_require__(127);
-
-var _StartScreen = __webpack_require__(310);
-
-var _StartScreen2 = _interopRequireDefault(_StartScreen);
-
-var _Lobby = __webpack_require__(313);
-
-var _Lobby2 = _interopRequireDefault(_Lobby);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Main = function Main() {
-  return _react2.default.createElement(
-    _reactRouterDom.BrowserRouter,
-    null,
-    _react2.default.createElement(
-      'div',
-      null,
-      _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _StartScreen2.default }),
-      _react2.default.createElement(_reactRouterDom.Route, { path: '/lobby', component: _Lobby2.default })
-    )
-  );
-};
-
-exports.default = Main;
-
-/***/ }),
+/* 285 */,
 /* 286 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -34204,127 +34185,7 @@ NavLink.defaultProps = {
 
 
 /***/ }),
-/* 310 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = __webpack_require__(6);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRedux = __webpack_require__(62);
-
-var _reactRouterDom = __webpack_require__(127);
-
-var _host = __webpack_require__(311);
-
-var _player = __webpack_require__(312);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var mapState = function mapState(state) {
-  return {
-    rooms: state.rooms
-  };
-};
-
-var mapDispatch = function mapDispatch(dispatch, ownProps) {
-  return {
-    hostNewGame: function hostNewGame() {
-      dispatch((0, _host.hostNewGame)());
-    },
-    playerJoinGame: function playerJoinGame(evt) {
-      evt.preventDefault();
-      var roomId = evt.target['room-id'].value;
-      var name = evt.target['player-name'].value;
-      dispatch((0, _player.playerJoinGame)(roomId, name));
-      ownProps.history.push('/lobby');
-    }
-  };
-};
-
-var StartScreen = function StartScreen(_ref) {
-  var rooms = _ref.rooms,
-      hostNewGame = _ref.hostNewGame,
-      playerJoinGame = _ref.playerJoinGame;
-  return _react2.default.createElement(
-    'div',
-    null,
-    _react2.default.createElement(
-      'h2',
-      null,
-      'host new game'
-    ),
-    _react2.default.createElement(
-      _reactRouterDom.Link,
-      { to: '/lobby' },
-      _react2.default.createElement(
-        'button',
-        { onClick: hostNewGame },
-        'go!'
-      )
-    ),
-    _react2.default.createElement(
-      'form',
-      { onSubmit: playerJoinGame },
-      _react2.default.createElement(
-        'h2',
-        null,
-        'join existing game'
-      ),
-      _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement(
-          'span',
-          null,
-          'ROOM ID:'
-        ),
-        _react2.default.createElement(
-          'select',
-          { name: 'room-id', defaultValue: 'select...' },
-          _react2.default.createElement(
-            'option',
-            { disabled: true },
-            'select...'
-          ),
-          rooms.map(function (roomId) {
-            return _react2.default.createElement(
-              'option',
-              { key: roomId, value: roomId },
-              roomId
-            );
-          })
-        )
-      ),
-      _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement(
-          'span',
-          null,
-          'PLAYER NAME:'
-        ),
-        _react2.default.createElement('input', { name: 'player-name', type: 'text' })
-      ),
-      _react2.default.createElement(
-        'button',
-        { type: 'submit' },
-        'join'
-      )
-    )
-  );
-};
-
-exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(StartScreen);
-
-/***/ }),
+/* 310 */,
 /* 311 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -34334,12 +34195,15 @@ exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(StartScreen);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.hostNewGame = undefined;
+exports.hostStartGame = exports.hostNewGame = undefined;
 
 var _constants = __webpack_require__(70);
 
 var hostNewGame = exports.hostNewGame = function hostNewGame() {
   return { type: _constants.HOST_NEW_GAME };
+};
+var hostStartGame = exports.hostStartGame = function hostStartGame() {
+  return { type: _constants.HOST_START_GAME };
 };
 
 /***/ }),
@@ -34384,39 +34248,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mapState = function mapState(state) {
   return {
     roomId: state.roomId,
-    players: state.players,
-    isHost: state.isHost,
-    currentPlayer: state.currentPlayer
+    players: state.players
   };
 };
 
 var Lobby = function Lobby(_ref) {
   var roomId = _ref.roomId,
-      players = _ref.players,
-      isHost = _ref.isHost,
-      currentPlayer = _ref.currentPlayer;
+      players = _ref.players;
   return _react2.default.createElement(
     'div',
-    null,
+    { className: 'vertical-center-container' },
     _react2.default.createElement(
-      'h3',
-      null,
-      'Welcome',
-      !isHost && ', ' + currentPlayer.name
-    ),
-    _react2.default.createElement(
-      'p',
-      null,
-      'Room ID: ',
-      roomId
-    ),
-    isHost ? _react2.default.createElement(
       'div',
-      null,
+      { className: 'text-center' },
       _react2.default.createElement(
-        'h3',
+        'h1',
         null,
-        'players in room:'
+        'Room ID: ',
+        roomId
+      ),
+      _react2.default.createElement(
+        'p',
+        null,
+        'Enter room code on mobile device to join'
+      ),
+      _react2.default.createElement('hr', { className: 'dots' }),
+      _react2.default.createElement(
+        'h2',
+        null,
+        'Players Joined:'
       ),
       _react2.default.createElement(
         'ul',
@@ -34429,15 +34289,168 @@ var Lobby = function Lobby(_ref) {
           );
         })
       )
-    ) : _react2.default.createElement(
-      'p',
-      null,
-      'Please wait for host to begin the game'
     )
   );
 };
 
 exports.default = (0, _reactRedux.connect)(mapState, null)(Lobby);
+
+/***/ }),
+/* 314 */,
+/* 315 */,
+/* 316 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(6);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(62);
+
+var _reactRouterDom = __webpack_require__(127);
+
+var _host = __webpack_require__(311);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapDispatch = function mapDispatch(dispatch) {
+  return {
+    hostNewGame: function hostNewGame() {
+      return dispatch((0, _host.hostNewGame)());
+    }
+  };
+};
+
+var HostMain = function HostMain(_ref) {
+  var hostNewGame = _ref.hostNewGame;
+  return _react2.default.createElement(
+    'div',
+    { className: 'vertical-center-container' },
+    _react2.default.createElement(
+      'div',
+      { id: 'main', className: 'text-center' },
+      _react2.default.createElement(
+        'h1',
+        null,
+        'AVALON'
+      ),
+      _react2.default.createElement(
+        'p',
+        null,
+        'rules rules rules explain game here etc. etc. blah blah. rules rules rules explain game here etc. etc. blah blah. rules rules rules explain game here etc. etc. blah blah. rules rules rules explain game here etc. etc. blah blah.'
+      ),
+      _react2.default.createElement(
+        _reactRouterDom.Link,
+        { to: '/lobby', className: 'btn', onClick: hostNewGame },
+        'New Game'
+      )
+    )
+  );
+};
+
+exports.default = (0, _reactRedux.connect)(null, mapDispatch)(HostMain);
+
+/***/ }),
+/* 317 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(6);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = __webpack_require__(62);
+
+var _player = __webpack_require__(312);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var mapState = function mapState(state) {
+  return {
+    rooms: state.rooms
+  };
+};
+
+var mapDispatch = function mapDispatch(dispatch) {
+  return {
+    playerJoinGame: function playerJoinGame(evt) {
+      evt.preventDefault();
+      var roomId = evt.target['room-id'].value;
+      var name = evt.target['player-name'].value;
+      dispatch((0, _player.playerJoinGame)(roomId, name));
+      console.log('hey you joined woo');
+    }
+  };
+};
+
+var PlayerJoin = function (_React$Component) {
+  _inherits(PlayerJoin, _React$Component);
+
+  function PlayerJoin() {
+    _classCallCheck(this, PlayerJoin);
+
+    var _this = _possibleConstructorReturn(this, (PlayerJoin.__proto__ || Object.getPrototypeOf(PlayerJoin)).call(this));
+
+    _this.state = {
+      roomError: null,
+      nameError: null
+    };
+    return _this;
+  }
+
+  _createClass(PlayerJoin, [{
+    key: 'render',
+    value: function render() {
+      var playerJoinGame = this.props.playerJoinGame;
+
+      return _react2.default.createElement(
+        'div',
+        { className: 'vertical-center-container mobile text-center' },
+        _react2.default.createElement(
+          'form',
+          { onSubmit: playerJoinGame },
+          _react2.default.createElement(
+            'h1',
+            null,
+            'Join Game'
+          ),
+          _react2.default.createElement('input', { name: 'room-id', type: 'text', placeholder: 'Enter room ID here' }),
+          _react2.default.createElement('input', { name: 'player-name', type: 'text', placeholder: 'Enter your name here' }),
+          _react2.default.createElement(
+            'button',
+            { type: 'submit', className: 'btn' },
+            'submit'
+          )
+        )
+      );
+    }
+  }]);
+
+  return PlayerJoin;
+}(_react2.default.Component);
+
+exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(PlayerJoin);
 
 /***/ })
 /******/ ]);
