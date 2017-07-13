@@ -4,6 +4,7 @@ import {
   SERVER_HOST_SUCCESSFUL,
   SERVER_PLAYER_JOINED,
   SERVER_JOIN_SUCCESSFUL,
+  SERVER_ERROR,
 } from '../../constants';
 
 const initialState = {
@@ -11,6 +12,9 @@ const initialState = {
   roomId: null,
   players: [],
   currentPlayer: {},
+  errors: {
+    joinError: null,
+  },
   isHost: false,
 };
 
@@ -40,6 +44,11 @@ function reducer(prevState = initialState, action) {
       nextState.roomId = action.roomId;
       nextState.players = action.allPlayers;
       nextState.currentPlayer = action.newPlayer;
+      return nextState;
+
+    // error handling
+    case SERVER_ERROR:
+      nextState.errors[action.error.type] = action.error;
       return nextState;
 
     default:

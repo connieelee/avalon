@@ -4,6 +4,7 @@ const {
   SERVER_NEW_ROOM_CREATED,
   SERVER_PLAYER_JOINED,
   SERVER_JOIN_SUCCESSFUL,
+  SERVER_ERROR,
 } = require('../constants');
 
 module.exports.serverSendRooms = rooms => ({
@@ -24,4 +25,8 @@ module.exports.serverPlayerJoined = newPlayer => ({
 
 module.exports.serverJoinSuccessful = (roomId, allPlayers, newPlayer) => ({
   type: SERVER_JOIN_SUCCESSFUL, roomId, allPlayers, newPlayer,
+});
+
+module.exports.serverError = (error) => ({
+  type: SERVER_ERROR, error,
 });

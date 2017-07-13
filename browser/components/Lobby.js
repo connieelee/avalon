@@ -9,12 +9,18 @@ const mapState = state => ({
 const Lobby = ({ roomId, players }) => (
   <div className="vertical-center-container">
     <div className="text-center">
-      <h1>Room ID: {roomId}</h1>
+      <h1>Room ID: <span className="room-code">{roomId}</span></h1>
       <p>Enter room code on mobile device to join</p>
       <hr className="dots" />
       <h2>Players Joined:</h2>
-      <ul>
-        { players.map(player => <li key={player.id}>{player.name}</li>) }
+      <ul className="pure-g">
+        {
+          players.map(player => (
+            <li key={player.id} className="pure-u-1-6 player-card">
+              {player.name}
+            </li>
+          ))
+        }
       </ul>
     </div>
   </div>

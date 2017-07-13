@@ -1,10 +1,12 @@
 const utils = require('../utils');
+const { RoomDoesNotExistError } = require('./errors');
 const {
   serverSendRooms,
   serverNewRoomCreated,
   serverHostSuccessful,
   serverPlayerJoined,
   serverJoinSuccessful,
+  serverError,
 } = require('./actionCreators');
 
 const {
@@ -33,9 +35,12 @@ module.exports.init = (io, socket) => {
 
     // player events
     if (action.type === PLAYER_JOIN_GAME) {
-      // TODO: handle invalid-room, name-taken, and room-full errors
       const { roomId, name } = action;
       const room = rooms[roomId];
+      if (!room) socket.emit('action', serverError(new RoomDoesNotExistError(roomId)));
+      
+      // TODO: handle name-taken, and room-full errors
+
       if (room && room.players.length <= 10) {
         const nameTaken = room.players.find(player => player.name === name);
         if (!nameTaken) {
