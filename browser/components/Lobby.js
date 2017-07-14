@@ -1,13 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 const mapState = state => ({
   roomId: state.roomId,
   players: state.players,
 });
 
+const mapDispatch = null;
+
 const Lobby = ({ roomId, players }) => (
-  <div className="vertical-center-container">
+  !roomId ? <Redirect to="/" /> :
+  <div className="flex-container-col vertical-center">
     <div className="text-center">
       <h1>Room ID: <span className="room-code">{roomId}</span></h1>
       <p>Enter room code on mobile device to join</p>
@@ -26,4 +30,4 @@ const Lobby = ({ roomId, players }) => (
   </div>
 );
 
-export default connect(mapState, null)(Lobby);
+export default connect(mapState, mapDispatch)(Lobby);

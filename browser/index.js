@@ -8,6 +8,7 @@ import store from './store';
 import HostMain from './components/HostMain';
 import Lobby from './components/Lobby';
 import PlayerJoin from './components/PlayerJoin';
+import WaitingRoom from './components/WaitingRoom';
 
 ReactDOM.render(
   <Provider store={store}>
@@ -16,6 +17,7 @@ ReactDOM.render(
         <Route exact path="/" component={HostMain} />
         <Route path="/lobby" component={Lobby} />
         <Route path="/join" component={PlayerJoin} />
+        <Route path="/wait" component={WaitingRoom} />
       </div>
     </Router>
   </Provider>,

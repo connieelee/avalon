@@ -11,9 +11,9 @@ const initialState = {
   rooms: [],
   roomId: null,
   players: [],
-  currentPlayer: {},
+  currentPlayer: null,
   errors: {
-    joinError: null,
+    joinErrors: [],
   },
   isHost: false,
 };
@@ -23,36 +23,46 @@ function reducer(prevState = initialState, action) {
 
   switch (action.type) {
     // cross-game events
-    case SERVER_SEND_ROOMS:
+    case SERVER_SEND_ROOMS: {
       nextState.rooms = action.rooms;
       return nextState;
-    case SERVER_NEW_ROOM_CREATED:
+    }
+    case SERVER_NEW_ROOM_CREATED: {
       nextState.rooms = [...prevState.rooms, action.roomId];
       return nextState;
+    }
 
     // host-related events
-    case SERVER_HOST_SUCCESSFUL:
+    case SERVER_HOST_SUCCESSFUL: {
       nextState.isHost = true;
       nextState.roomId = action.roomId;
       return nextState;
+    }
 
     // player-related events
-    case SERVER_PLAYER_JOINED:
+    case SERVER_PLAYER_JOINED: {
       nextState.players = [...prevState.players, action.newPlayer];
       return nextState;
-    case SERVER_JOIN_SUCCESSFUL:
+    }
+    case SERVER_JOIN_SUCCESSFUL: {
       nextState.roomId = action.roomId;
       nextState.players = action.allPlayers;
       nextState.currentPlayer = action.newPlayer;
+      nextState.errors.joinErrors = [];
       return nextState;
+    }
 
     // error handling
-    case SERVER_ERROR:
-      nextState.errors[action.error.type] = action.error;
+    case SERVER_ERROR: {
+      const { type: errorType, message: errorMsg } = action.error;
+      const existingErrors = nextState.errors[action.error.type];
+      nextState.errors[errorType] = [...existingErrors, errorMsg];
       return nextState;
+    }
 
-    default:
+    default: {
       return prevState;
+    }
   }
 }
 
