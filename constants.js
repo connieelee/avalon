@@ -12,3 +12,6 @@ module.exports.HOST_START_GAME = 'host/START_GAME';
 
 // player
 module.exports.PLAYER_JOIN_GAME = 'player/JOIN_GAME';
+
+// frontend-only
+module.exports.CLEAR_SERVER_ERRORS = 'CLEAR_SERVER_ERRORS';

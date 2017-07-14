@@ -9102,6 +9102,9 @@ module.exports.HOST_START_GAME = 'host/START_GAME';
 // player
 module.exports.PLAYER_JOIN_GAME = 'player/JOIN_GAME';
 
+// frontend-only
+module.exports.CLEAR_SERVER_ERRORS = 'CLEAR_SERVER_ERRORS';
+
 /***/ }),
 /* 75 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -34206,6 +34209,11 @@ function reducer() {
         nextState.errors[errorType] = [].concat(_toConsumableArray(existingErrors), [errorMsg]);
         return nextState;
       }
+    case _constants.CLEAR_SERVER_ERRORS:
+      {
+        nextState.errors[action.errorType] = [];
+        return nextState;
+      }
 
     default:
       {
@@ -34258,7 +34266,7 @@ var HostMain = function HostMain(_ref) {
       hostNewGame = _ref.hostNewGame;
   return roomId ? _react2.default.createElement(_reactRouterDom.Redirect, { to: '/lobby' }) : _react2.default.createElement(
     'div',
-    { className: 'flex-container-col vertical-center' },
+    { className: ' pink-yellow-gradient flex-container-col vertical-center' },
     _react2.default.createElement(
       'div',
       { id: 'main', className: 'text-center flex-container-col' },
@@ -34429,6 +34437,9 @@ var mapDispatch = function mapDispatch(dispatch) {
   return {
     playerJoinGame: function playerJoinGame(roomId, name) {
       return dispatch((0, _player.playerJoinGame)(roomId, name));
+    },
+    clearServerErrors: function clearServerErrors(errorType) {
+      return dispatch((0, _player.clearServerErrors)(errorType));
     }
   };
 };
@@ -34458,6 +34469,7 @@ var PlayerJoin = function (_React$Component) {
     key: 'playerSubmit',
     value: function playerSubmit(evt) {
       evt.preventDefault();
+      this.props.clearServerErrors('joinErrors');
       var roomId = this.state.room.value;
       var name = this.state.name.value;
       this.props.playerJoinGame(roomId, name);
@@ -34491,7 +34503,7 @@ var PlayerJoin = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      // TODO: allow players to upload a photo for the game?
+      // TODO: allow players to upload a profile photo for the game?
       return this.props.currentPlayer ? _react2.default.createElement(_reactRouterDom.Redirect, { to: '/wait' }) : _react2.default.createElement(
         'div',
         { className: 'vertical-center flex-container-col mobile text-center' },
@@ -34559,13 +34571,19 @@ exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(PlayerJoin);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.playerJoinGame = undefined;
+exports.clearServerErrors = exports.playerJoinGame = undefined;
 
 var _constants = __webpack_require__(74);
 
 var playerJoinGame = exports.playerJoinGame = function playerJoinGame(roomId, name) {
   return {
     type: _constants.PLAYER_JOIN_GAME, roomId: roomId, name: name
+  };
+};
+
+var clearServerErrors = exports.clearServerErrors = function clearServerErrors(errorType) {
+  return {
+    type: _constants.CLEAR_SERVER_ERRORS, errorType: errorType
   };
 };
 

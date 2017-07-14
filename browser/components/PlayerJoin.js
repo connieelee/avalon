@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
-import { playerJoinGame } from '../actionCreators/player';
+import { playerJoinGame, clearServerErrors } from '../actionCreators/player';
 
 const mapState = state => ({
   errors: state.errors.joinErrors,
@@ -12,6 +12,7 @@ const mapState = state => ({
 
 const mapDispatch = (dispatch) => ({
   playerJoinGame: (roomId, name) => dispatch(playerJoinGame(roomId, name)),
+  clearServerErrors: (errorType) => dispatch(clearServerErrors(errorType)),
 });
 
 const initialFormState = () => ({
@@ -29,6 +30,7 @@ class PlayerJoin extends React.Component {
 
   playerSubmit(evt) {
     evt.preventDefault();
+    this.props.clearServerErrors('joinErrors');
     const roomId = this.state.room.value;
     const name = this.state.name.value;
     this.props.playerJoinGame(roomId, name);
@@ -57,7 +59,7 @@ class PlayerJoin extends React.Component {
   }
 
   render() {
-    // TODO: allow players to upload a photo for the game?
+    // TODO: allow players to upload a profile photo for the game?
     return (
       this.props.currentPlayer ? <Redirect to="/wait" /> :
       <div className="vertical-center flex-container-col mobile text-center">

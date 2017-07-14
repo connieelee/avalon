@@ -14,7 +14,7 @@ const mapDispatch = dispatch => ({
 
 const HostMain = ({ roomId, hostNewGame }) => (
   roomId ? <Redirect to="/lobby" /> :
-  <div className="flex-container-col vertical-center">
+  <div className=" pink-yellow-gradient flex-container-col vertical-center">
     <div id="main" className="text-center flex-container-col">
       <h1 id="title">AVALON</h1>
       <p>

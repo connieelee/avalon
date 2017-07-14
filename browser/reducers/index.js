@@ -5,6 +5,7 @@ import {
   SERVER_PLAYER_JOINED,
   SERVER_JOIN_SUCCESSFUL,
   SERVER_ERROR,
+  CLEAR_SERVER_ERRORS,
 } from '../../constants';
 
 const initialState = {
@@ -57,6 +58,10 @@ function reducer(prevState = initialState, action) {
       const { type: errorType, message: errorMsg } = action.error;
       const existingErrors = nextState.errors[action.error.type];
       nextState.errors[errorType] = [...existingErrors, errorMsg];
+      return nextState;
+    }
+    case CLEAR_SERVER_ERRORS: {
+      nextState.errors[action.errorType] = [];
       return nextState;
     }
 

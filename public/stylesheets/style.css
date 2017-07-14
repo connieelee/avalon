@@ -2,22 +2,28 @@
   font-family: 'Open Sans';
   box-sizing: border-box;
   color: white; }
+  *:focus {
+    outline: none;
+    box-shadow: 2px 2px 10px #4c4c4c; }
 
 #root {
-  background: linear-gradient(142deg, #ff5160 25%, #ffc86d 85%);
-  font-size: 1.2em; }
+  font-size: 1.2rem;
+  background: linear-gradient(160deg, #4cd0c0, #234169 90%); }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Poiret One';
-  letter-spacing: 0.1em;
+  letter-spacing: 0.1rem;
   font-variant: small-caps; }
 
 h1 + p {
-  margin-top: -0.4em; }
+  margin-top: -0.4rem; }
+
+.pink-yellow-gradient {
+  background: linear-gradient(142deg, #ff5160 25%, #ffc86d 85%); }
 
 #title {
   font-weight: 200;
-  font-size: 3em;
+  font-size: 3rem;
   font-style: italic;
   text-shadow: 2px 2px 12px rgba(230, 0, 41, 0.8); }
 
@@ -41,11 +47,11 @@ h1 + p {
 
 .btn {
   border: 1px solid white;
-  border-radius: 0.3em;
-  padding: 0.6em 1.2em;
+  border-radius: 0.3rem;
+  padding: 0.6em 1.2rem;
   text-decoration: none;
   background-color: rgba(255, 255, 255, 0.15);
-  margin-top: 1em; }
+  margin-top: 1rem; }
   .btn:disabled {
     background-color: rgba(130, 130, 130, 0.78);
     border: 1px; }
@@ -59,44 +65,44 @@ h1 + p {
 .mobile input {
   border: none;
   color: #252525;
-  border-radius: .4em;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  margin: .5em 1em; }
+  border-radius: .4rem;
+  padding: 0.6em 1.2rem;
+  font-size: 1rem;
+  margin: .5em 1rem; }
 
 .mobile .btn {
-  font-size: 1em;
-  margin: .5em 1em; }
+  font-size: 1rem;
+  margin: .5em 1rem; }
 
 hr.dots {
   color: #ffc86d;
-  border-width: 0 0 .4em;
+  border-width: 0 0 .4rem;
   border-style: solid;
   border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1" width="8" height="4"><circle fill="#ffc86d" cx="1" cy="0.5" r="0.5"/></svg>') 0 0 100% repeat;
-  width: 5em;
-  margin-top: 1.5em; }
+  width: 5rem;
+  margin-top: 1.5rem; }
 
 .room-code {
   color: #ffc86d;
-  font-weight: lighter; }
+  font-weight: lighter;
+  font-variant: normal; }
 
 .player-card {
   list-style-type: none;
   border: 1px solid white;
   border-radius: 5px;
-  margin: 1em;
+  margin: 1rem;
   padding: 2em 0; }
 
 .err-msg {
-  background-color: #e20000;
+  background-color: #e2003d;
   color: white;
-  margin: auto 1em;
+  margin: auto 1rem;
   border-radius: 5px;
-  padding: .4em; }
+  padding: .4rem; }
 
 .warning-msg {
-  background-color: #ffeb53;
-  margin: -.3em 1em 0 1em;
+  background-color: #ffc86d;
+  margin: -0.1rem 1rem;
   border-radius: 5px;
-  padding: 3px;
-  color: grey; }
+  padding: 3px; }
