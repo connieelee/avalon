@@ -10,9 +10,9 @@ const mapDispatch = null;
 
 const WaitingRoom = ({ currentPlayer }) => (
   !currentPlayer ? <Redirect to="/join" /> :
-  <div className="vertical-center flex-container-col text-center">
-    <div>
-      <h2>Welcome, {currentPlayer.name}!</h2>
+  <div className="vertical-center flex-container-col text-center mobile">
+    <div className="content-card">
+      <h2>Welcome, {currentPlayer.name}.</h2>
       <p>Please wait for the host to begin the game.</p>
     </div>
   </div>

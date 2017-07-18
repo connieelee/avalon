@@ -2,3 +2,15 @@ $pink: #ff5160;
 $yellow: #ffc86d;
 $plum: #6f3851;
 $error: #e2003d;
+$teal: #4cd0c0;
+$dark-teal: #45abb9;
+$dusty-blue: #3d81b1;
+$dark-blue: #396bad;
+
+.teal-blue-gradient {
+  background: linear-gradient(160deg,$teal, $dark-blue 90%);
+}
+
+.pink-yellow-gradient {
+  background: linear-gradient(142deg, $pink 25%, $yellow 85%);
+}

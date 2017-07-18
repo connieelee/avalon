@@ -64,28 +64,33 @@ class PlayerJoin extends React.Component {
       this.props.currentPlayer ? <Redirect to="/wait" /> :
       <div className="vertical-center flex-container-col mobile text-center">
         <form onSubmit={this.playerSubmit}>
-          <h1>Join Game</h1>
-          {
-            this.props.errors.map(message => (
-              <p key={message} className="err-msg">{message}</p>
-            ))
-          }
-          <input
-            name="room"
-            type="text"
-            placeholder="Room ID..."
-            value={this.state.room.value}
-            onChange={this.updateInputValue}
-          />
-          { this.state.room.error && <p className="warning-msg">{this.state.room.error}</p> }
-          <input
-            name="name"
-            type="text"
-            placeholder="Your name..."
-            value={this.state.name.value}
-            onChange={this.updateInputValue}
-          />
-          { this.state.name.error && <p className="warning-msg">{this.state.name.error}</p> }
+          <h1>join game</h1>
+          {this.props.errors.map(message => (
+            <p key={message} className="err-msg">{message}</p>
+          ))}
+          <div className="input-group">
+            <i className="fa fa-lock" />
+            <input
+              name="room"
+              type="text"
+              maxLength="7"
+              placeholder="Room ID..."
+              value={this.state.room.value}
+              onChange={this.updateInputValue}
+            />
+          </div>
+          {this.state.room.error && <p className="warning-msg">{this.state.room.error}</p>}
+          <div className="input-group">
+            <i className="fa fa-user" />
+            <input
+              name="name"
+              type="text"
+              placeholder="Your name..."
+              value={this.state.name.value}
+              onChange={this.updateInputValue}
+            />
+          </div>
+          {this.state.name.error && <p className="warning-msg">{this.state.name.error}</p>}
           <button id="join-submit" type="submit" className="btn" disabled>submit</button>
         </form>
       </div>
