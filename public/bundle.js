@@ -15579,6 +15579,10 @@ var _reactRedux = __webpack_require__(32);
 
 var _reactRouterDom = __webpack_require__(34);
 
+var _requireMobile = __webpack_require__(316);
+
+var _requireMobile2 = _interopRequireDefault(_requireMobile);
+
 var _store = __webpack_require__(280);
 
 var _store2 = _interopRequireDefault(_store);
@@ -15601,6 +15605,7 @@ var _WaitingRoom2 = _interopRequireDefault(_WaitingRoom);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/* global document */
 _reactDom2.default.render(_react2.default.createElement(
   _reactRedux.Provider,
   { store: _store2.default },
@@ -15612,11 +15617,11 @@ _reactDom2.default.render(_react2.default.createElement(
       null,
       _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _HostMain2.default }),
       _react2.default.createElement(_reactRouterDom.Route, { path: '/lobby', component: _Lobby2.default }),
-      _react2.default.createElement(_reactRouterDom.Route, { path: '/join', component: _PlayerJoin2.default }),
-      _react2.default.createElement(_reactRouterDom.Route, { path: '/wait', component: _WaitingRoom2.default })
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/join', component: (0, _requireMobile2.default)(_PlayerJoin2.default) }),
+      _react2.default.createElement(_reactRouterDom.Route, { path: '/wait', component: (0, _requireMobile2.default)(_WaitingRoom2.default) })
     )
   )
-), document.getElementById('root')); /* global document */
+), document.getElementById('root'));
 
 /***/ }),
 /* 132 */
@@ -34661,6 +34666,63 @@ var WaitingRoom = function WaitingRoom(_ref) {
 };
 
 exports.default = (0, _reactRedux.connect)(mapState, mapDispatch)(WaitingRoom);
+
+/***/ }),
+/* 315 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// curtesy of: https://gist.github.com/gordonbrander/2230317
+module.exports.ID = function () {
+  return Math.random().toString(36).substr(2, 7);
+};
+module.exports.isOnMobileDevice = function (navigator) {
+  return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)
+  );
+};
+
+/***/ }),
+/* 316 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(6);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _utils = __webpack_require__(315);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* global navigator */
+function requireMobile(Component) {
+  if ((0, _utils.isOnMobileDevice)(navigator)) return Component;
+  return function () {
+    return _react2.default.createElement(
+      'div',
+      { className: 'flex-container-col vertical-center mobile' },
+      _react2.default.createElement(
+        'div',
+        { className: 'text-center require-mobile-card' },
+        _react2.default.createElement(
+          'h1',
+          null,
+          'please visit this url from a mobile device.'
+        )
+      )
+    );
+  };
+}
+
+exports.default = requireMobile;
 
 /***/ })
 /******/ ]);

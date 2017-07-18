@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
+import requireMobile from './hocs/requireMobile';
+
 import store from './store';
 import HostMain from './components/HostMain';
 import Lobby from './components/Lobby';
@@ -16,8 +18,8 @@ ReactDOM.render(
       <div>
         <Route exact path="/" component={HostMain} />
         <Route path="/lobby" component={Lobby} />
-        <Route path="/join" component={PlayerJoin} />
-        <Route path="/wait" component={WaitingRoom} />
+        <Route path="/join" component={requireMobile(PlayerJoin)} />
+        <Route path="/wait" component={requireMobile(WaitingRoom)} />
       </div>
     </Router>
   </Provider>,

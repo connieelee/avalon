@@ -75,11 +75,17 @@ h1 {
     font-family: 'Sail';
   }
 
+
   .content-card {
     background-color: white;
     margin: 1.5rem;
     border-radius: 5px;
     padding: 3rem;
+  }
+
+  .require-mobile-card {
+    @extend .content-card;
+    margin: 0 30vw;
   }
 
   form {

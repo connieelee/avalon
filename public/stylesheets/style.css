@@ -59,11 +59,13 @@ h1 + p {
   color: #3d81b1; }
   .mobile h1, .mobile h2, .mobile h3, .mobile h4, .mobile h5, .mobile h6 {
     font-family: 'Sail'; }
-  .mobile .content-card {
+  .mobile .content-card, .mobile .require-mobile-card {
     background-color: white;
     margin: 1.5rem;
     border-radius: 5px;
     padding: 3rem; }
+  .mobile .require-mobile-card {
+    margin: 0 30vw; }
   .mobile form {
     display: flex;
     flex-direction: column;
