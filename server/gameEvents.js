@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const utils = require('../utils');
 const {
   RoomDoesNotExistError,
@@ -11,6 +12,8 @@ const {
   serverHostSuccessful,
   serverPlayerJoined,
   serverJoinSuccessful,
+  serverAssignRoleToPlayer,
+  serverRoleAssignmentComplete,
   serverError,
 } = require('./actionCreators');
 
@@ -36,7 +39,38 @@ module.exports.init = (io, socket) => {
       // TODO: HANDLE HOST DISCONNECTION
     }
     if (action.type === HOST_START_GAME) {
-      // TODO: ASSIGN ROLES TO PLAYERS
+      const { roomId, specialCharacters } = action;
+      const room = rooms[roomId];
+
+      let numPlayers = room.players.length;
+      let numEvil = (numPlayers < 7) ? 2 : (numPlayers < 10) ? 3 : 4;
+
+      const roles = [];
+      Object.keys(specialCharacters).forEach(character => {
+        if (specialCharacters[character].selected) {
+          roles.push(character);
+          numPlayers -= 1;
+          if (specialCharacters[character].evil) numEvil -= 1;
+        }
+      });
+
+      while (numPlayers) {
+        if (numEvil) {
+          roles.push('minion');
+          numEvil -= 1;
+        } else {
+          roles.push('servant');
+        }
+        numPlayers -= 1;
+      }
+
+      const shuffledRoles = _.shuffle(roles);
+      room.players.forEach(player => {
+        player.role = shuffledRoles.pop();
+        socket.to(player.id).emit('action', serverAssignRoleToPlayer(player.role));
+      });
+
+      io.in(roomId).emit('action', serverRoleAssignmentComplete());
     }
 
     // player events

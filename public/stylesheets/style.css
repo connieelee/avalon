@@ -1,7 +1,7 @@
 .teal-blue-gradient, .mobile {
   background: linear-gradient(160deg, #4cd0c0, #396bad 90%); }
 
-.pink-yellow-gradient, #root {
+.pink-yellow-gradient {
   background: linear-gradient(142deg, #ff5160 25%, #ffc86d 85%); }
 
 * {
@@ -11,7 +11,6 @@
     outline: none; }
 
 #root {
-  color: white;
   font-size: 1.2rem; }
 
 h1, h2, h3, h4, h5, h6 {
@@ -24,8 +23,7 @@ h1 + p {
   letter-spacing: 0.1rem;
   font-weight: 200;
   font-size: 3rem;
-  font-style: italic;
-  text-shadow: 2px 2px 6px rgba(230, 0, 41, 0.8); }
+  font-style: italic; }
 
 .text-center {
   text-align: center; }
@@ -46,8 +44,8 @@ h1 + p {
     width: 60%; }
 
 .btn {
-  color: white;
-  border: 1px solid white;
+  color: black;
+  border: 1px solid black;
   border-radius: 0.3rem;
   padding: 0.6em 1.2rem;
   text-decoration: none;
@@ -85,6 +83,8 @@ h1 + p {
       border-left: 1px solid lightgrey;
       margin-left: .9rem; }
   .mobile .btn {
+    color: white;
+    border: none;
     background: #3d81b1; }
 
 *::-webkit-input-placeholder {

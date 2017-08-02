@@ -4,6 +4,8 @@ import {
   SERVER_HOST_SUCCESSFUL,
   SERVER_PLAYER_JOINED,
   SERVER_JOIN_SUCCESSFUL,
+  SERVER_ASSIGN_ROLE,
+  SERVER_ROLES_ASSIGNED,
   SERVER_ERROR,
   CLEAR_SERVER_ERRORS,
 } from '../../constants';
@@ -17,6 +19,7 @@ const initialState = {
     joinErrors: [],
   },
   isHost: false,
+  setupComplete: false,
 };
 
 function reducer(prevState = initialState, action) {
@@ -39,6 +42,10 @@ function reducer(prevState = initialState, action) {
       nextState.roomId = action.roomId;
       return nextState;
     }
+    case SERVER_ROLES_ASSIGNED: {
+      nextState.setupComplete = true;
+      return nextState;
+    }
 
     // player-related events
     case SERVER_PLAYER_JOINED: {
@@ -50,6 +57,10 @@ function reducer(prevState = initialState, action) {
       nextState.players = action.allPlayers;
       nextState.currentPlayer = action.newPlayer;
       nextState.errors.joinErrors = [];
+      return nextState;
+    }
+    case SERVER_ASSIGN_ROLE: {
+      nextState.currentPlayer.role = action.role;
       return nextState;
     }
 

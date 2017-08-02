@@ -4,6 +4,8 @@ const {
   SERVER_NEW_ROOM_CREATED,
   SERVER_PLAYER_JOINED,
   SERVER_JOIN_SUCCESSFUL,
+  SERVER_ASSIGN_ROLE,
+  SERVER_ROLES_ASSIGNED,
   SERVER_ERROR,
 } = require('../constants');
 
@@ -25,6 +27,14 @@ module.exports.serverPlayerJoined = newPlayer => ({
 
 module.exports.serverJoinSuccessful = (roomId, allPlayers, newPlayer) => ({
   type: SERVER_JOIN_SUCCESSFUL, roomId, allPlayers, newPlayer,
+});
+
+module.exports.serverAssignRoleToPlayer = (role) => ({
+  type: SERVER_ASSIGN_ROLE, role,
+});
+
+module.exports.serverRoleAssignmentComplete = () => ({
+  type: SERVER_ROLES_ASSIGNED,
 });
 
 module.exports.serverError = (error) => ({
