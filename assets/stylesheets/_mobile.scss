@@ -1,0 +1,49 @@
+.mobile {
+  @extend .teal-blue-gradient;
+  color: $dusty-blue;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sail';
+  }
+
+  .content-card {
+    background-color: white;
+    margin: 1.5rem;
+    border-radius: 5px;
+    padding: 3rem;
+  }
+
+  .require-mobile-card {
+    @extend .content-card;
+    margin: 0 30vw;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin: 1rem;
+    border-radius: 5px;
+    padding: 1.5rem;
+  }
+
+  .input-group {
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    text-align: left;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+
+    input {
+      border: none;
+      padding: 0.6rem 1rem;
+      border-left: 1px solid lightgrey;
+      margin-left: .9rem;
+    }
+  }
+
+  .btn {
+    color: white;
+    border: none;
+    background: $dusty-blue
+  }
+}

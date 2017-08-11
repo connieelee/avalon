@@ -1,9 +1,14 @@
-/* global document */
+/* global document navigator */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+} from 'react-router-dom';
 
+import { isOnMobileDevice } from '../utils';
 import requireMobile from './hocs/requireMobile';
 
 import store from './store';
@@ -18,7 +23,12 @@ ReactDOM.render(
   <Provider store={store}>
     <Router>
       <div>
-        <Route exact path="/" component={HostMain} />
+        <Route exact path="/"
+          render={() => {
+            if (!isOnMobileDevice(navigator)) return <HostMain />;
+            return <Redirect to="/join" />;
+          }}
+        />
         <Route path="/lobby" component={Lobby} />
         <Route path="/board" component={Board} />
         <Route path="/join" component={requireMobile(PlayerJoin)} />
