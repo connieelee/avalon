@@ -5,7 +5,8 @@ import {
   SERVER_PLAYER_JOINED,
   SERVER_JOIN_SUCCESSFUL,
   SERVER_ASSIGN_ROLE,
-  SERVER_ROLES_ASSIGNED,
+  SERVER_BOARD_SETUP,
+  SERVER_DESIGNATE_QUEST_MASTER,
   SERVER_ERROR,
   CLEAR_SERVER_ERRORS,
 } from '../../constants';
@@ -13,13 +14,15 @@ import {
 const initialState = {
   rooms: [],
   roomId: null,
+  isHost: false,
   players: [],
   currentPlayer: null,
+  quests: {},
+  currentQuestNum: 1,
+  setupComplete: false,
   errors: {
     joinErrors: [],
   },
-  isHost: false,
-  setupComplete: false,
 };
 
 function reducer(prevState = initialState, action) {
@@ -42,7 +45,8 @@ function reducer(prevState = initialState, action) {
       nextState.roomId = action.roomId;
       return nextState;
     }
-    case SERVER_ROLES_ASSIGNED: {
+    case SERVER_BOARD_SETUP: {
+      nextState.quests = action.quests;
       nextState.setupComplete = true;
       return nextState;
     }
@@ -60,7 +64,13 @@ function reducer(prevState = initialState, action) {
       return nextState;
     }
     case SERVER_ASSIGN_ROLE: {
+      nextState.currentPlayer = Object.assign({}, prevState.currentPlayer);
       nextState.currentPlayer.role = action.role;
+      return nextState;
+    }
+    case SERVER_DESIGNATE_QUEST_MASTER: {
+      nextState.currentPlayer = Object.assign({}, prevState.currentPlayer);
+      nextState.currentPlayer.isQuestMaster = true;
       return nextState;
     }
 

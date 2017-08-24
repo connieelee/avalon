@@ -5,7 +5,8 @@ module.exports.SERVER_NEW_ROOM_CREATED = 'server/NEW_ROOM_CREATED';
 module.exports.SERVER_PLAYER_JOINED = 'server/PLAYER_JOINED';
 module.exports.SERVER_JOIN_SUCCESSFUL = 'server/JOIN_SUCCESFUL';
 module.exports.SERVER_ASSIGN_ROLE = 'server/ASSIGN_ROLE';
-module.exports.SERVER_ROLES_ASSIGNED = 'server/ROLES_ASSIGNED';
+module.exports.SERVER_BOARD_SETUP = 'server/BOARD_SETUP';
+module.exports.SERVER_DESIGNATE_QUEST_MASTER = 'server/DESIGNATE_QUEST_MASTER';
 module.exports.SERVER_ERROR = 'server/ERROR';
 
 // host

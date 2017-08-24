@@ -13,7 +13,8 @@ const {
   serverPlayerJoined,
   serverJoinSuccessful,
   serverAssignRoleToPlayer,
-  serverRoleAssignmentComplete,
+  serverBoardSetup,
+  serverDesignateQuestMaster,
   serverError,
 } = require('./actionCreators');
 
@@ -24,6 +25,30 @@ const {
 } = require('../constants');
 
 const rooms = {};
+/*
+  {
+    roomId: {
+      host: hostId,
+      players: [{ id, name, role }, ...],
+      currentQuestNum: 1,
+      quests: {
+        1: {
+          status: <pending|success|fail>,
+          questMaster: masterId,
+          numParticipantsRequired: <int>
+          participants: [ <ids> ],
+          votes: { voterId: vote, ... } ,
+        },
+        2: { ... },
+        3: { ... },
+        4: { ... },
+        5: { ... },
+      },
+    },
+    roomId[string]: { ... },
+  }
+ */
+
 module.exports.init = (io, socket) => {
   // init
   socket.emit('action', serverSendRooms(Object.keys(rooms)));
@@ -42,9 +67,9 @@ module.exports.init = (io, socket) => {
       const { roomId, specialCharacters } = action;
       const room = rooms[roomId];
 
+      // determine player roles
       let numPlayers = room.players.length;
       let numEvil = (numPlayers < 7) ? 2 : (numPlayers < 10) ? 3 : 4;
-
       const roles = [];
       Object.keys(specialCharacters).forEach(character => {
         if (specialCharacters[character].selected) {
@@ -70,7 +95,12 @@ module.exports.init = (io, socket) => {
         socket.to(player.id).emit('action', serverAssignRoleToPlayer(player.role));
       });
 
-      io.in(roomId).emit('action', serverRoleAssignmentComplete());
+      // set up board (quests & other logistics)
+      room.quests = utils.makeQuests(room.players.length);
+      room.currentQuestNum = 1;
+      io.in(roomId).emit('action', serverBoardSetup(room.quests));
+      console.log('room.players', room.players);
+      socket.to(room.players[0].id).emit('action', serverDesignateQuestMaster());
     }
 
     // player events

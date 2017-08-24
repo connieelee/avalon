@@ -5,7 +5,8 @@ const {
   SERVER_PLAYER_JOINED,
   SERVER_JOIN_SUCCESSFUL,
   SERVER_ASSIGN_ROLE,
-  SERVER_ROLES_ASSIGNED,
+  SERVER_BOARD_SETUP,
+  SERVER_DESIGNATE_QUEST_MASTER,
   SERVER_ERROR,
 } = require('../constants');
 
@@ -33,8 +34,12 @@ module.exports.serverAssignRoleToPlayer = (role) => ({
   type: SERVER_ASSIGN_ROLE, role,
 });
 
-module.exports.serverRoleAssignmentComplete = () => ({
-  type: SERVER_ROLES_ASSIGNED,
+module.exports.serverBoardSetup = (quests) => ({
+  type: SERVER_BOARD_SETUP, quests,
+});
+
+module.exports.serverDesignateQuestMaster = () => ({
+  type: SERVER_DESIGNATE_QUEST_MASTER,
 });
 
 module.exports.serverError = (error) => ({
