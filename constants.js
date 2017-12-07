@@ -15,6 +15,7 @@ module.exports.HOST_START_GAME = 'host/START_GAME';
 
 // player
 module.exports.PLAYER_JOIN_GAME = 'player/JOIN_GAME';
+module.exports.SELECT_QUEST_PARTICIPANTS = 'player/SELECT_QUEST_PARTICIPANTS';
 
 // frontend-only
 module.exports.CLEAR_SERVER_ERRORS = 'CLEAR_SERVER_ERRORS';

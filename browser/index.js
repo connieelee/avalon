@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 
 import { isOnMobileDevice } from '../utils';
-import requireMobile from './hocs/requireMobile';
+// import requireMobile from './hocs/requireMobile';
 
 import store from './store';
 import HostMain from './components/HostMain';
@@ -31,9 +31,9 @@ ReactDOM.render(
         />
         <Route path="/lobby" component={Lobby} />
         <Route path="/board" component={Board} />
-        <Route path="/join" component={requireMobile(PlayerJoin)} />
-        <Route path="/wait" component={requireMobile(WaitingRoom)} />
-        <Route path="/play" component={requireMobile(PlayerView)} />
+        <Route path="/join" component={PlayerJoin} />
+        <Route path="/wait" component={WaitingRoom} />
+        <Route path="/play" component={PlayerView} />
       </div>
     </Router>
   </Provider>,
